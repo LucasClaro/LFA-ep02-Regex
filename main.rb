@@ -4,7 +4,9 @@ class Extrator
         @cep =  /\d{5}-?\d{3}/
         @uf = /(?<=[ ,-])[A-Z]{2}(?=[\s,-])/
         # @uf = /(?<=[ ,-])[A-Z]{2}(?=[^\w])/
-        @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!–º();':,. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
+        @tipoLogradouro = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa)/
+        @nomeDaRua = /(?<=Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+,/
+        @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
         @txt = ""
       end
       attr_accessor :cep, :geral, :txt, :uf
@@ -28,7 +30,9 @@ class Extrator
     def lerEspecifico(endereco)
         cep = endereco.scan(@cep)
         uf = endereco.scan(@uf).last
-        puts uf
+        tipoLogradouro = endereco.scan(@tipoLogradouro).first
+        nomeDaRua = endereco.scan(@nomeDaRua)
+        puts tipoLogradouro
         puts
     end
 
