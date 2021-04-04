@@ -5,7 +5,9 @@ class Extrator
         @uf = /(?<=[ ,-])[A-Z]{2}(?=[\s,-])/
         # @uf = /(?<=[ ,-])[A-Z]{2}(?=[^\w])/
         @tipoLogradouro = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa)/
-        @nomeDaRua = /(?<=Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+,/
+        @nomeDaRua = /(?<=Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+(?=,)/
+        @numero = /(?<=(?:Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+)/
+
         @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
         @txt = ""
       end
@@ -32,7 +34,8 @@ class Extrator
         uf = endereco.scan(@uf).last
         tipoLogradouro = endereco.scan(@tipoLogradouro).first
         nomeDaRua = endereco.scan(@nomeDaRua)
-        puts tipoLogradouro
+        numero = endereco.scan(@numero)
+        puts numero
         puts
     end
 
