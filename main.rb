@@ -8,15 +8,15 @@ class Extrator
         @nomeDaRua = /(?<=Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+(?=,)/
         # @numero = /(?<=(Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]{1,30})/
         @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
+        @geral3 = /(?<tipo>Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?<fim>[A-Z]{2}|\d{5}-?\d{3})/
         @txt = ""
 
         
         @dentro = /(?<=Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?=[A-Z]{2}|\d{5}-?\d{3})/
-        @separaCampos = /[a-zA-Z0-9!º\(\);':"\\\/\. ãáõôêéí]{1,}/
+        @separaCampos = /(?:(?:\d\-\d)|(?:\d\-\d)|[a-zA-Z0-9!º\(\);':"\\\/\. ãáõôêéí]){1,}/
         @camposDeDentro = []
 
     end
-    attr_accessor :cep, :geral, :txt, :uf
 
     def iniciar
         puts ("Digite 1 para entrar com os dados através de um arquivo")
@@ -32,6 +32,14 @@ class Extrator
                 iniciar
             end
         end
+    end
+
+    def iniciarDebug
+        file = File.open("exemplo.txt")
+        fileData = file.read
+        fileData.chomp
+        @txt = fileData
+        file.close
     end
 
     def iniciarArquivo
@@ -57,33 +65,65 @@ class Extrator
         end
     end
 
-    def lerEspecifico(endereco)
-        cep = endereco.scan(@cep)
-        uf = endereco.scan(@uf).last
-        tipoLogradouro = endereco.scan(@tipoLogradouro).first
-        nomeDaRua = endereco.scan(@nomeDaRua)
-        # numero = endereco.scan(@numero)
-        # puts numero
-        puts
+    def lerEspecificoCEP(endereco)
+        endereco.scan(@cep)        
+    end
+    
+    def lerEspecificoUF(endereco)
+        endereco.scan(@uf)
     end
 
     def separaCampos
-        coisasDeDentro = []
+        coisasDeDentro = ""
 
         result = @txt.scan(@geral)
         for item in result
-            coisasDeDentro.append(item.match(@dentro)[0])
+
+            matchResult = item.match(@geral3)
+
+            inicio = matchResult[:tipo]
+            fim = matchResult[:fim]
+            # coisasDeDentro.append(item.match(@dentro)[0])
+            coisasDeDentro = item.match(@dentro)[0]
+
+            vetor = []
+            vetor.append("Tipo: " + inicio)
+            vetor += coisasDeDentro.scan(@separaCampos)
+            
+            if fim.match?(@cep)
+                vetor.append("CEP: " + fim)
+                ufOp = item.match(@uf)
+                if ufOp != nil
+                    vetor.append("UF: " + ufOp[0])
+                end
+            else
+                vetor.append("UF: " + fim)
+                cepOp = item.match(@cep)
+                if cepOp != nil
+                    vetor.append("CEP: " + cepOp[0])
+                end
+            end
+
+            vetor.append(" ")
+            @camposDeDentro.append(vetor)
         end
 
-        for item in coisasDeDentro
-            @camposDeDentro.append(item.scan(@separaCampos))
-        end
+        # for item in coisasDeDentro
+
+        #     vetor = item.scan(@separaCampos)
+            
+        #     cep = lerEspecificoCEP(item)
+        #     uf = lerEspecificoUF(item)
+
+        #     vetor.append(" ")
+        #     @camposDeDentro.append(vetor)
+        # end
 
         puts @camposDeDentro
     end
 end
 
 e = Extrator.new
-e.iniciar
+e.iniciarDebug
 # e.lerGeral
 e.separaCampos
