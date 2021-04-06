@@ -7,6 +7,7 @@ class Extrator
         @tipoLogradouro = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa)/
         @nomeDaRua = /(?<=Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+(?=,)/
         # @numero = /(?<=(Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]{1,30})/
+        @numero = /(?:\d+|S\/N)/
         @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
         @geral3 = /(?<tipo>Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?<fim>[A-Z]{2}|\d{5}-?\d{3})/
         @txt = ""
@@ -75,9 +76,11 @@ class Extrator
 
     def separaCampos
         coisasDeDentro = ""
-
+        
         result = @txt.scan(@geral)
+
         for item in result
+            #Valores = {}
 
             matchResult = item.match(@geral3)
 
@@ -87,14 +90,19 @@ class Extrator
             coisasDeDentro = item.match(@dentro)[0]
 
             vetor = []
+            vetor.append("Endereço: " + item)
+
             vetor.append("Tipo: " + inicio)
-            vetor += coisasDeDentro.scan(@separaCampos)
+            aux = coisasDeDentro.scan(@separaCampos)
+            vetor.append("Nome: " + aux[0])
+            aux.shift()
             
+
             if fim.match?(@cep)
                 vetor.append("CEP: " + fim)
-                ufOp = item.match(@uf)
+                ufOp = item.scan(@uf).last
                 if ufOp != nil
-                    vetor.append("UF: " + ufOp[0])
+                    vetor.append("UF: " + ufOp)
                 end
             else
                 vetor.append("UF: " + fim)
@@ -104,7 +112,50 @@ class Extrator
                 end
             end
 
-            vetor.append(" ")
+            for buscaCep in aux
+                # if item.match?(@cep)
+                #     aux.delete(item)
+                # end
+                buscaCep.gsub @cep, ''
+            end
+
+            for buscaUF in aux
+                if buscaUF.match?(/\s*[A-Z]{2}\s*/)
+                    aux.delete(buscaUF)
+                end
+            end
+
+            for buscaNumero in aux
+                if buscaNumero.match?(@numero)
+                    num = buscaNumero.match(@numero)[0]
+                    vetor.append("Número: " + num)
+                    puts ("NUM: " + num + " BuscaNUMEROAntigo: "+ buscaNumero)
+                    buscaNumero.slice! num
+                    puts ("BuscaNUMERO depois de remover NUM: "+ buscaNumero)
+                    puts
+                    break
+                end
+            end
+
+            #  aux = aux.reject { |c| c.to_s.empty? }
+            aux.delete(" ")
+            # vetor.append(aux.length.to_s)
+            # vetor.append(aux.inspect)
+            case aux.length
+            when 1
+                vetor.append("Cidade: " + aux[0])    
+            when 2
+                vetor.append("Complemento: " + aux[0])    
+                vetor.append("Cidade: " + aux[1])    
+            when 3
+                vetor.append("Complemento: " + aux[0])    
+                vetor.append("Bairro: " + aux[1])    
+                vetor.append("Cidade: " + aux[2])    
+            when 4
+            else
+            end
+
+            vetor.append("-----------")
             @camposDeDentro.append(vetor)
         end
 
