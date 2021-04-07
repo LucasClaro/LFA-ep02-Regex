@@ -2,21 +2,47 @@ class Extrator
 
     def initialize
         @cep =  /\d{5}-?\d{3}/
-        @uf = /(?<=[ ,-])[A-Z]{2}(?=[\s,-])/
-        # @uf = /(?<=[ ,-])[A-Z]{2}(?=[^\w])/
-        @tipoLogradouro = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa)/
-        @nomeDaRua = /(?<=Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+(?=,)/
-        # @numero = /(?<=(Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]{1,30})/
+        @uf = /(?<=[ ,-])[A-Z]{2}(?=[\s,-])/        
+        @tipoLogradouro = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa|AL|AL\.|Al|Al\.|Alameda|CPO|CPO\.|Cpo|Cpo\.|Campo|COND|COND\.|Cond|Cond\.|Condomínio|LG|LG\.|Lg|Lg\.|Lago|JD|JD\.|Jd|Jd\.|Jardim|PRQ|PRQ\.|Prq|Prq\.|Parque|PC|PC\.|Pc|Pc\.|Praça|VL|VL\.|Vl|Vl\.|Vila)/
+        @nomeDaRua = /(?<=Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa |AL |AL\. |Al |Al\. |Alameda |CPO |CPO\. |Cpo |Cpo\. |Campo |COND |COND\. |Cond |Cond\. |Condomínio |LG |LG\. |Lg |Lg\. |Lago |JD |JD\. |Jd |Jd\. |Jardim |PRQ |PRQ\. |Prq |Prq\. |Parque |PC |PC\. |Pc |Pc\. |Praça |VL |VL\. |Vl |Vl\. |Vila )[a-zA-Z0-9!\–º\(\)\-;':\\"\/\. ãáõôêéí]+(?=,)/
         @numero = /(?:\d+|S\/N)/
-        @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
-        @geral3 = /(?<tipo>Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?<fim>[A-Z]{2}|\d{5}-?\d{3})/
-        @txt = ""
 
-        
-        @dentro = /(?<=Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?=[A-Z]{2}|\d{5}-?\d{3})/
+        @geral = /(?:Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa|AL|AL\.|Al|Al\.|Alameda|CPO|CPO\.|Cpo|Cpo\.|Campo|COND|COND\.|Cond|Cond\.|Condomínio|LG|LG\.|Lg|Lg\.|Lago|JD|JD\.|Jd|Jd\.|Jardim|PRQ|PRQ\.|Prq|Prq\.|Parque|PC|PC\.|Pc|Pc\.|Praça|VL|VL\.|Vl|Vl\.|Vila) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?:[A-Z]{2}|\d{5}-?\d{3})/
+        @geralComNamedGrp = /(?<tipo>Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa|AL|AL\.|Al|Al\.|Alameda|CPO|CPO\.|Cpo|Cpo\.|Campo|COND|COND\.|Cond|Cond\.|Condomínio|LG|LG\.|Lg|Lg\.|Lago|JD|JD\.|Jd|Jd\.|Jardim|PRQ|PRQ\.|Prq|Prq\.|Parque|PC|PC\.|Pc|Pc\.|Praça|VL|VL\.|Vl|Vl\.|Vila) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?<fim>[A-Z]{2}|\d{5}-?\d{3})/
+        @dentro = /(?<=Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa|AL|AL\.|Al|Al\.|Alameda|CPO|CPO\.|Cpo|Cpo\.|Campo|COND|COND\.|Cond|Cond\.|Condomínio|LG|LG\.|Lg|Lg\.|Lago|JD|JD\.|Jd|Jd\.|Jardim|PRQ|PRQ\.|Prq|Prq\.|Parque|PC|PC\.|Pc|Pc\.|Praça|VL|VL\.|Vl|Vl\.|Vila) [a-zA-Z0-9!\–º\(\)\-;':"\\,\/\. ãáõôêéí]{1,90} (?=[A-Z]{2}|\d{5}-?\d{3})/
         @separaCampos = /(?:(?:\d\-\d)|(?:\d\-\d)|[a-zA-Z0-9!º\(\);':"\\\/\. ãáõôêéí]){1,}/
-        @camposDeDentro = []
 
+        @vetorEnderecosFinal = []
+        @txt = ""
+    end
+
+    def printar(dict)
+        puts ("--------------------")
+        puts dict["Endereco"]
+        puts dict["Tipo"]
+        puts dict["Nome"]
+        puts dict["Numero"]
+        puts dict["Complemento"]
+        puts dict["Bairro"]
+        puts dict["Cidade"]
+        puts dict["Uf"]
+        puts dict["Cep"]
+        puts ("--------------------")
+        puts
+    end
+
+    def initDict
+        dict = {}
+        dict["Endereco"] = "Endereco: N/A"
+        dict["Tipo"] = "Tipo: N/A"
+        dict["Nome"] = "Nome: N/A"
+        dict["Numero"] = "Numero: N/A"
+        dict["Complemento"] = "Complemento: N/A"
+        dict["Bairro"] = "Bairro: N/A"
+        dict["Cidade"] = "Cidade: N/A"
+        dict["Uf"] = "Uf: N/A"
+        dict["Cep"] = "Cep: N/A"
+        return dict
     end
 
     def iniciar
@@ -58,123 +84,96 @@ class Extrator
         @txt = gets.chomp()
     end
 
-    def lerGeral
-        enderecos = @txt.scan(@geral)
-        for endereco in enderecos
-            puts endereco
-            lerEspecifico(endereco)
-        end
-    end
-
-    def lerEspecificoCEP(endereco)
-        endereco.scan(@cep)        
-    end
-    
-    def lerEspecificoUF(endereco)
-        endereco.scan(@uf)
-    end
-
     def separaCampos
         coisasDeDentro = ""
         
         result = @txt.scan(@geral)
 
         for item in result
-            #Valores = {}
 
-            matchResult = item.match(@geral3)
+            matchResult = item.match(@geralComNamedGrp)
 
             inicio = matchResult[:tipo]
             fim = matchResult[:fim]
-            # coisasDeDentro.append(item.match(@dentro)[0])
             coisasDeDentro = item.match(@dentro)[0]
 
-            vetor = []
-            vetor.append("Endereço: " + item)
+            dicionarioFormatado = initDict
+            dicionarioFormatado["Endereco"] = ("Endereço: " + item)
 
-            vetor.append("Tipo: " + inicio)
+            dicionarioFormatado["Tipo"] = ("Tipo: " + inicio)
             aux = coisasDeDentro.scan(@separaCampos)
-            vetor.append("Nome: " + aux[0])
+            dicionarioFormatado["Nome"] = ("Nome: " + aux[0])
             aux.shift()
             
 
             if fim.match?(@cep)
-                vetor.append("CEP: " + fim)
+                dicionarioFormatado["Cep"] = ("CEP: " + fim)
                 ufOp = item.scan(@uf).last
                 if ufOp != nil
-                    vetor.append("UF: " + ufOp)
+                    dicionarioFormatado["Uf"] = ("UF: " + ufOp)
                 end
             else
-                vetor.append("UF: " + fim)
+                dicionarioFormatado["Uf"] = ("UF: " + fim)
                 cepOp = item.match(@cep)
                 if cepOp != nil
-                    vetor.append("CEP: " + cepOp[0])
+                    dicionarioFormatado["Cep"] = ("CEP: " + cepOp[0])
                 end
             end
 
             for buscaCep in aux
-                # if item.match?(@cep)
-                #     aux.delete(item)
-                # end
                 buscaCep.gsub @cep, ''
             end
 
             for buscaUF in aux
-                if buscaUF.match?(/\s*[A-Z]{2}\s*/)
-                    aux.delete(buscaUF)
+                variavel = buscaUF.match(/\s[A-Z]{2}\s/)
+                if variavel != nil
+                    buscaUF[variavel[0]]= ""
                 end
             end
 
             for buscaNumero in aux
                 if buscaNumero.match?(@numero)
                     num = buscaNumero.match(@numero)[0]
-                    vetor.append("Número: " + num)
-                    puts ("NUM: " + num + " BuscaNUMEROAntigo: "+ buscaNumero)
+                    dicionarioFormatado["Numero"] = ("Número: " + num)
                     buscaNumero.slice! num
-                    puts ("BuscaNUMERO depois de remover NUM: "+ buscaNumero)
-                    puts
                     break
                 end
             end
 
-            #  aux = aux.reject { |c| c.to_s.empty? }
-            aux.delete(" ")
-            # vetor.append(aux.length.to_s)
-            # vetor.append(aux.inspect)
+            for elemento in aux
+                variavel = elemento.match(/\s+/)
+                if variavel != nil
+                    aux.delete(variavel[0])
+                end
+            end
+            aux.delete("")
+        
             case aux.length
-            when 1
-                vetor.append("Cidade: " + aux[0])    
-            when 2
-                vetor.append("Complemento: " + aux[0])    
-                vetor.append("Cidade: " + aux[1])    
-            when 3
-                vetor.append("Complemento: " + aux[0])    
-                vetor.append("Bairro: " + aux[1])    
-                vetor.append("Cidade: " + aux[2])    
-            when 4
-            else
+                when 1
+                    dicionarioFormatado["Cidade"] = ("Cidade: " + aux[0])
+                when 2
+                    dicionarioFormatado["Complemento"] = ("Complemento: " + aux[0])
+                    dicionarioFormatado["Cidade"] = ("Cidade: " + aux[1])    
+                when 3
+                    dicionarioFormatado["Complemento"] = ("Complemento: " + aux[0])    
+                    dicionarioFormatado["Bairro"] = ("Bairro: " + aux[1])    
+                    dicionarioFormatado["Cidade"] = ("Cidade: " + aux[2])        
+                when 4
+                    dicionarioFormatado["Complemento"] = ("Complemento: " + aux[1])    
+                    dicionarioFormatado["Bairro"] = ("Bairro: " + aux[2])    
+                    dicionarioFormatado["Cidade"] = ("Cidade: " + aux[3])  
+                else
             end
 
-            vetor.append("-----------")
-            @camposDeDentro.append(vetor)
+            @vetorEnderecosFinal.append(dicionarioFormatado)
         end
 
-        # for item in coisasDeDentro
-
-        #     vetor = item.scan(@separaCampos)
-            
-        #     cep = lerEspecificoCEP(item)
-        #     uf = lerEspecificoUF(item)
-
-        #     vetor.append(" ")
-        #     @camposDeDentro.append(vetor)
-        # end
-
-        puts @camposDeDentro
+        for enderco in @vetorEnderecosFinal
+            printar enderco
+        end
     end
 end
 
 e = Extrator.new
 e.iniciarDebug
-# e.lerGeral
 e.separaCampos

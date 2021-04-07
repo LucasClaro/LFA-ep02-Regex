@@ -27,3 +27,8 @@ for item in coisasDeDentro
 end
 
 print camposDeDentro
+
+
+
+Rua|Av|Av\.|Avenida|R|R\.|Rodovia|Praça|Travessa|AL|AL\.|Al|Al\.|Alameda|CPO|CPO\.|Cpo|Cpo\.|Campo|COND|COND\.|Cond|Cond\.|Condomínio|LG|LG\.|Lg|Lg\.|Lago|JD|JD\.|Jd|Jd\.|Jardim|PRQ|PRQ\.|Prq|Prq\.|Parque|PC|PC\.|Pc|Pc\.|Praça|VL|VL\.|Vl|Vl\.|Vila|
+Rua |Av |Av\. |Avenida |R |R\. |Rodovia |Praça |Travessa |AL |AL\. |Al |Al\. |Alameda |CPO |CPO\. |Cpo |Cpo\. |Campo |COND |COND\. |Cond |Cond\. |Condomínio |LG |LG\. |Lg |Lg\. |Lago |JD |JD\. |Jd |Jd\. |Jardim |PRQ |PRQ\. |Prq |Prq\. |Parque |PC |PC\. |Pc |Pc\. |Praça |VL |VL\. |Vl |Vl\. |Vila |
