@@ -175,5 +175,5 @@ class Extrator
 end
 
 e = Extrator.new
-e.iniciarDebug
+e.iniciar
 e.separaCampos
